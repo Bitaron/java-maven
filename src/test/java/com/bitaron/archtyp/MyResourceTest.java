@@ -16,9 +16,6 @@ public class MyResourceTest {
         try {
             SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
             Session session = sessionFactory.openSession();
-            DemoUser demoUser = new DemoUser();
-            demoUser.setId(1);
-            session.save(demoUser);
             assertEquals(session.isConnected(),true);
         } catch (Throwable ex) {
             System.out.println("Initial SessionFactory creation failed. " + ex);
