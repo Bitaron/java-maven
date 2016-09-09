@@ -146,7 +146,7 @@
         <profile>
             <id>development</id>
             <properties>
-                <db.username>roo</db.username>
+                <db.username>root</db.username>
                 <db.password>123456</db.password>
                 <db.connectionURL>jdbc:mysql://localhost:3306/Hms</db.connectionURL>
             </properties>
