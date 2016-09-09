@@ -1,4 +1,4 @@
-package com.bitaron.archtyp;
+package com.bitaron.archtype;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

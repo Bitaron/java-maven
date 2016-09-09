@@ -1,4 +1,4 @@
-package com.bitaron.archtyp;
+package com.bitaron.archtype;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,7 +22,6 @@ public class MyResourceTest {
             ex.printStackTrace();
             assertFalse("Initial SessionFactory creation failed. " + ex,true);
         }
-
     }
 
 }

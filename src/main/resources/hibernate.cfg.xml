@@ -31,7 +31,7 @@
 
         <!-- Drop and re-create the database schema on startup -->
         <property name="hibernate.hbm2ddl.auto">create-drop</property>
-        <mapping class="com.bitaron.archtyp.DemoUser"/>
+        <mapping class="com.bitaron.archtype.DemoUser"/>
 
     </session-factory>
 

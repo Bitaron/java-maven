@@ -1,4 +1,4 @@
-package com.bitaron.archtyp;
+package com.bitaron.archtype;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
