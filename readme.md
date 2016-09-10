@@ -4,7 +4,9 @@ Sample seed project for maven with jersey,hibernate showing how use maven profil
 
 # How To Run
 - Install java 8.
-- Insatall maven.
+- Install maven.
+- Install tomcat8.
+- Change db username and password for db in pom.xml.
 - Create a database called **test**.
 - run
-`mvn clean test -Pdevelopment`
+`./build_and_deploy.sh DEV`
