@@ -1,4 +1,4 @@
-package com.bitaron.archtype;
+package com.bitaron.archtype.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,6 +18,6 @@ public class MyResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getIt() {
-        return "Got it jersey-hibernate base seed!";
+        return "Seed app for jersey-hibernate!";
     }
 }
