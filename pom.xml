@@ -13,7 +13,7 @@
     <!-- BUILD -->
 
     <build>
-        <finalName>jersey-quick-env</finalName>
+        <finalName>jerseyHibernate</finalName>
         <!-- PLUGINS -->
         <plugins>
             <plugin>
