@@ -2,6 +2,7 @@ package com.bitaron.archtype.security.filters;
 
 
 import com.bitaron.archtype.security.annotations.BasicAuth;
+import com.bitaron.archtype.security.utilities.GeneralUtility;
 import org.glassfish.jersey.internal.util.Base64;
 
 import javax.annotation.Priority;
@@ -25,33 +26,44 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     private static final String USER_NAME = "userName";
     private static final String PASSWORD = "password";
 
+
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+
         List<String> authHeader = containerRequestContext.getHeaders().get(HEADER_KEY);
-        if (authHeader != null && authHeader.size() > 0) {
-            String authToken = authHeader.get(0);
-            authToken = authToken.replaceFirst(HEADER_PREFIX, "");
-            String decodedString = Base64.decodeAsString(authToken);
-            StringTokenizer tokenizer = new StringTokenizer(decodedString, ":");
-            String userName = tokenizer.nextToken();
-            String passWord = tokenizer.nextToken();
-            if (userName.equals(USER_NAME) && passWord.equals(PASSWORD)) {
-                return;
-            }else {
-                Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Username and Password doesn't match").build();
+        boolean validAuthHeader = authHeader != null && authHeader.size() > 0;
+
+        if (validAuthHeader) {
+
+            try {
+                StringTokenizer tokenizer = extractAndDecodeBasicAuthToker(authHeader.get(0));
+                String userName = tokenizer.nextToken();
+                String passWord = tokenizer.nextToken();
+
+                if (userName.equals(USER_NAME) && passWord.equals(PASSWORD)) {
+                    return;
+                } else {
+                    Response unauthorizedStatus = GeneralUtility.createUnauthorizedResponse("Username and Password doesn't match");
+                    containerRequestContext.abortWith(unauthorizedStatus);
+                }
+            }catch (Exception e) {
+                Response unauthorizedStatus = GeneralUtility.createUnauthorizedResponse("Username and Password doesn't match");
                 containerRequestContext.abortWith(unauthorizedStatus);
             }
+
         }else {
-            Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("No `Basic` token found in `Authorizaton` header.").build();
+            Response unauthorizedStatus = GeneralUtility.createUnauthorizedResponse("No `Basic` token found in `Authorizaton` header.");
             containerRequestContext.abortWith(unauthorizedStatus);
         }
-
-
-
-
-
     }
+
+    private StringTokenizer extractAndDecodeBasicAuthToker(String basicAuthToken) {
+        basicAuthToken = basicAuthToken.replaceFirst(HEADER_PREFIX, "");
+        String decodedString = Base64.decodeAsString(basicAuthToken);
+        StringTokenizer tokenizer = new StringTokenizer(decodedString, ":");
+       return tokenizer;
+    }
+
+
 
 }

@@ -1,11 +1,11 @@
 package com.bitaron.archtype.security.filters;
 
 
-import com.bitaron.archtype.responses.ResponseCode;
 import com.bitaron.archtype.security.annotations.JwtAuth;
 import com.bitaron.archtype.security.jwt.JwtHelper;
 import com.bitaron.archtype.security.jwt.SamplePrinciple;
 import com.bitaron.archtype.security.jwt.SampleSecurityContext;
+import com.bitaron.archtype.security.utilities.GeneralUtility;
 import io.jsonwebtoken.Claims;
 
 import javax.annotation.Priority;
@@ -34,12 +34,9 @@ public class JwtFilter implements ContainerRequestFilter {
             String authToken = authHeader.get(0);
             authToken = authToken.replaceFirst(HEADER_PREFIX, "");
             Claims claim = JwtHelper.parseJWT(authToken);
-            if(claim==null){
-                Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(
-                                new com.bitaron.archtype.responses.Response(
-                                        ResponseCode.UNAUTHORIZED,"Invalid JWT token.")
-                        ).build();
+            if(claim == null){
+                Response unauthorizedStatus =
+                        GeneralUtility.createUnauthorizedResponse("Invalid JWT token.");
                 containerRequestContext.abortWith(unauthorizedStatus);
             }else{
                 SamplePrinciple samplePrinciple = new SamplePrinciple("1");
@@ -48,12 +45,8 @@ public class JwtFilter implements ContainerRequestFilter {
                 return;
             }
         }else{
-            Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(
-                            new com.bitaron.archtype.responses.Response(
-                                    ResponseCode.UNAUTHORIZED,"No `Bearer` Token found in `Authorization` header.")
-                    ).build();
-
+            Response unauthorizedStatus =
+                    GeneralUtility.createUnauthorizedResponse("No `Bearer` Token found in `Authorization` header.");
             containerRequestContext.abortWith(unauthorizedStatus);
         }
     }

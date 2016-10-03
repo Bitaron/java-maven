@@ -1,8 +1,8 @@
 package com.bitaron.archtype.resources;
 
 
-import com.bitaron.archtype.responses.Response;
-import com.bitaron.archtype.responses.ResponseCode;
+import com.bitaron.archtype.customResponses.CustomResponse;
+import com.bitaron.archtype.customResponses.CustomResponseCode;
 import com.bitaron.archtype.security.annotations.BasicAuth;
 import com.bitaron.archtype.security.annotations.JwtAuth;
 import com.bitaron.archtype.security.jwt.JwtHelper;
@@ -19,31 +19,31 @@ public class SecurityResource {
 
     @GET
     @Path("simpleHTTP")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String simpleHttpWithoutSecurity(){
-        return "No security Mr.!";
+    @Produces(MediaType.APPLICATION_JSON)
+    public CustomResponse simpleHttpWithoutSecurity(){
+        return new CustomResponse(CustomResponseCode.SUCCESS, "No security Mr.!");
     }
 
     @GET
     @Path("basicAuth")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @BasicAuth
-    public String simpleHttpWithBasicAuth(){
-        return "Basic Authentication is here!";
+    public CustomResponse simpleHttpWithBasicAuth(){
+        return new CustomResponse(CustomResponseCode.SUCCESS, "Basic Authentication is here!");
     }
 
     @GET
     @Path("getJwtToken")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getJwtToken(){
-        return new Response(ResponseCode.SUCCESS, JwtHelper.createToken());
+    public CustomResponse getJwtToken(){
+        return new CustomResponse(CustomResponseCode.SUCCESS, JwtHelper.createToken());
     }
 
     @GET
     @Path("jwtToken")
     @Produces(MediaType.APPLICATION_JSON)
     @JwtAuth
-    public Response simpleHttpWithJWT(@Context SecurityContext securityContext){
-        return new Response(ResponseCode.SUCCESS, securityContext.getUserPrincipal().getName());
+    public CustomResponse simpleHttpWithJWT(@Context SecurityContext securityContext){
+        return new CustomResponse(CustomResponseCode.SUCCESS, securityContext.getUserPrincipal().getName());
     }
 }
