@@ -1,8 +1,11 @@
 package com.bitaron.archtype.security.filters;
 
 
+import com.bitaron.archtype.responses.ResponseCode;
 import com.bitaron.archtype.security.annotations.JwtAuth;
 import com.bitaron.archtype.security.jwt.JwtHelper;
+import com.bitaron.archtype.security.jwt.SamplePrinciple;
+import com.bitaron.archtype.security.jwt.SampleSecurityContext;
 import io.jsonwebtoken.Claims;
 
 import javax.annotation.Priority;
@@ -33,14 +36,23 @@ public class JwtFilter implements ContainerRequestFilter {
             Claims claim = JwtHelper.parseJWT(authToken);
             if(claim==null){
                 Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Invalid JWT token.").build();
+                        .entity(
+                                new com.bitaron.archtype.responses.Response(
+                                        ResponseCode.UNAUTHORIZED,"Invalid JWT token.")
+                        ).build();
                 containerRequestContext.abortWith(unauthorizedStatus);
             }else{
+                SamplePrinciple samplePrinciple = new SamplePrinciple("1");
+                SampleSecurityContext sampleSecurityContext = new SampleSecurityContext(samplePrinciple);
+                containerRequestContext.setSecurityContext(sampleSecurityContext);
                 return;
             }
         }else{
             Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("No `Bearer` Token found in `Authorization` header.").build();
+                    .entity(
+                            new com.bitaron.archtype.responses.Response(
+                                    ResponseCode.UNAUTHORIZED,"No `Bearer` Token found in `Authorization` header.")
+                    ).build();
 
             containerRequestContext.abortWith(unauthorizedStatus);
         }
