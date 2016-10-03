@@ -1,8 +1,9 @@
 package com.bitaron.archtype.security.filters;
 
 
-import com.bitaron.archtype.security.annotations.BasicAuth;
-import org.glassfish.jersey.internal.util.Base64;
+import com.bitaron.archtype.security.annotations.JwtAuth;
+import com.bitaron.archtype.security.jwt.JwtHelper;
+import io.jsonwebtoken.Claims;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -12,46 +13,36 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.List;
-import java.util.StringTokenizer;
 
-@BasicAuth
+@JwtAuth
 @Provider
-@Priority(Priorities.AUTHENTICATION)
-public class BasicAuthFilter implements ContainerRequestFilter {
+@Priority(Priorities.AUTHORIZATION)
+public class JwtFilter implements ContainerRequestFilter {
 
     private static final String HEADER_KEY = "Authorization";
-    private static final String HEADER_PREFIX = "Basic ";
-
-    private static final String USER_NAME = "userName";
-    private static final String PASSWORD = "password";
+    private static final String HEADER_PREFIX = "Bearer ";
+    //JWT token: eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxIn0.gE5WOBhKP21aGIinBYuEkgXYf7d2Pa1BZEwjlI_TRUo
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+
         List<String> authHeader = containerRequestContext.getHeaders().get(HEADER_KEY);
         if (authHeader != null && authHeader.size() > 0) {
             String authToken = authHeader.get(0);
             authToken = authToken.replaceFirst(HEADER_PREFIX, "");
-            String decodedString = Base64.decodeAsString(authToken);
-            StringTokenizer tokenizer = new StringTokenizer(decodedString, ":");
-            String userName = tokenizer.nextToken();
-            String passWord = tokenizer.nextToken();
-            if (userName.equals(USER_NAME) && passWord.equals(PASSWORD)) {
-                return;
-            }else {
+            Claims claim = JwtHelper.parseJWT(authToken);
+            if(claim==null){
                 Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                        .entity("Username and Password doesn't match").build();
+                        .entity("Invalid JWT token.").build();
                 containerRequestContext.abortWith(unauthorizedStatus);
+            }else{
+                return;
             }
-        }else {
+        }else{
             Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
-                    .entity("No `Basic` token found in `Authorizaton` header.").build();
+                    .entity("No `Bearer` Token found in `Authorization` header.").build();
+
             containerRequestContext.abortWith(unauthorizedStatus);
         }
-
-
-
-
-
     }
-
 }

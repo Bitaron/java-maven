@@ -2,6 +2,7 @@ package com.bitaron.archtype.resources;
 
 
 import com.bitaron.archtype.security.annotations.BasicAuth;
+import com.bitaron.archtype.security.annotations.JwtAuth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -24,5 +25,13 @@ public class SecurityResource {
     @BasicAuth
     public String simpleHttpWithBasicAuth(){
         return "Basic Authentication is here!";
+    }
+
+    @GET
+    @Path("jwtToken")
+    @Produces(MediaType.TEXT_PLAIN)
+    @JwtAuth
+    public String simpleHttpWithJWT(){
+        return "JWT Authentication is here!";
     }
 }
